@@ -1,0 +1,9 @@
+name: VoLamV2
+version: 1.0.0
+main: neo.volam2.main.Main
+api-version: '1.21'
+description: Vo Lam V2 Plugin
+depend:
+  - MythicLib
+softdepend:
+  - ParticleNativeAPI
