@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.api.stat.SharedStat;
 import io.lumine.mythic.lib.api.stat.modifier.StatModifier;
-import io.lumine.mythic.lib.player.modifier.ModifierSource;
+import io.lumine.mythic.lib.player.modifier.ModifierType;
 import neo.volam2.data.PlayerData;
 import neo.volam2.data.PlayerDataManager;
 
@@ -30,13 +30,13 @@ public class TiemNangManager {
         if (mmoData == null) return;
 
         // Remove old modifiers
-        removeStats(p);
+//        removeStats(p);
 
         // Suc Manh: +physical damage
         if (data.getSucManh() > 0) {
             double val = data.getSucManh() * SUC_MANH_DAMAGE;
             mmoData.getStatMap().getInstance(SharedStat.ATTACK_DAMAGE)
-                .registerModifier(new StatModifier(MODIFIER_KEY + "sucmanh_dmg", SharedStat.ATTACK_DAMAGE, val, ModifierSource.OTHER));
+                .registerModifier(new StatModifier(MODIFIER_KEY + "sucmanh_dmg", SharedStat.ATTACK_DAMAGE, val, ModifierType.FLAT));
         }
 
         // Than Phap: +dodge, +crit chance
@@ -44,9 +44,9 @@ public class TiemNangManager {
             double dodge = data.getThanPhap() * THAN_PHAP_DODGE;
             double crit = data.getThanPhap() * THAN_PHAP_CRIT_CHANCE;
             mmoData.getStatMap().getInstance(SharedStat.DODGE_RATING)
-                .registerModifier(new StatModifier(MODIFIER_KEY + "thanphap_dodge", SharedStat.DODGE_RATING, dodge, ModifierSource.OTHER));
+                .registerModifier(new StatModifier(MODIFIER_KEY + "thanphap_dodge", SharedStat.DODGE_RATING, dodge, ModifierType.ADDITIVE_MULTIPLIER));
             mmoData.getStatMap().getInstance(SharedStat.CRITICAL_STRIKE_CHANCE)
-                .registerModifier(new StatModifier(MODIFIER_KEY + "thanphap_crit", SharedStat.CRITICAL_STRIKE_CHANCE, crit, ModifierSource.OTHER));
+                .registerModifier(new StatModifier(MODIFIER_KEY + "thanphap_crit", SharedStat.CRITICAL_STRIKE_CHANCE, crit, ModifierType.ADDITIVE_MULTIPLIER));
         }
 
         // Noi Cong: +mana, +magic damage
@@ -54,9 +54,9 @@ public class TiemNangManager {
             double mana = data.getNoiCong() * NOI_CONG_MANA;
             double magicDmg = data.getNoiCong() * NOI_CONG_MAGIC_DMG;
             mmoData.getStatMap().getInstance(SharedStat.MAX_MANA)
-                .registerModifier(new StatModifier(MODIFIER_KEY + "noicong_mana", SharedStat.MAX_MANA, mana, ModifierSource.OTHER));
-            mmoData.getStatMap().getInstance(SharedStat.MAGIC_DAMAGE)
-                .registerModifier(new StatModifier(MODIFIER_KEY + "noicong_magicdmg", SharedStat.MAGIC_DAMAGE, magicDmg, ModifierSource.OTHER));
+                .registerModifier(new StatModifier(MODIFIER_KEY + "noicong_mana", SharedStat.MAX_MANA, mana, ModifierType.FLAT));
+            mmoData.getStatMap().getInstance(SharedStat.MAGICAL_DAMAGE)
+                .registerModifier(new StatModifier(MODIFIER_KEY + "noicong_magicdmg", SharedStat.MAGICAL_DAMAGE, magicDmg, ModifierType.FLAT));
         }
 
         // The Luc: +HP, +defense
@@ -64,32 +64,32 @@ public class TiemNangManager {
             double hp = data.getTheLuc() * THE_LUC_HP;
             double def = data.getTheLuc() * THE_LUC_DEFENSE;
             mmoData.getStatMap().getInstance(SharedStat.MAX_HEALTH)
-                .registerModifier(new StatModifier(MODIFIER_KEY + "theluc_hp", SharedStat.MAX_HEALTH, hp, ModifierSource.OTHER));
+                .registerModifier(new StatModifier(MODIFIER_KEY + "theluc_hp", SharedStat.MAX_HEALTH, hp, ModifierType.FLAT));
             mmoData.getStatMap().getInstance(SharedStat.ARMOR)
-                .registerModifier(new StatModifier(MODIFIER_KEY + "theluc_def", SharedStat.ARMOR, def, ModifierSource.OTHER));
+                .registerModifier(new StatModifier(MODIFIER_KEY + "theluc_def", SharedStat.ARMOR, def, ModifierType.FLAT));
         }
     }
 
-    public static void removeStats(Player p) {
-        MMOPlayerData mmoData = MMOPlayerData.get(p.getUniqueId());
-        if (mmoData == null) return;
-
-        String[] keys = {
-            "sucmanh_dmg", "thanphap_dodge", "thanphap_crit",
-            "noicong_mana", "noicong_magicdmg", "theluc_hp", "theluc_def"
-        };
-        String[] stats = {
-            SharedStat.ATTACK_DAMAGE, SharedStat.DODGE_RATING, SharedStat.CRITICAL_STRIKE_CHANCE,
-            SharedStat.MAX_MANA, SharedStat.MAGIC_DAMAGE, SharedStat.MAX_HEALTH, SharedStat.ARMOR
-        };
-
-        for (int i = 0; i < keys.length; i++) {
-            try {
-                mmoData.getStatMap().getInstance(stats[i])
-                    .removeModifier(MODIFIER_KEY + keys[i]);
-            } catch (Exception ignored) {}
-        }
-    }
+//    public static void removeStats(Player p) {
+//        MMOPlayerData mmoData = MMOPlayerData.get(p.getUniqueId());
+//        if (mmoData == null) return;
+//
+//        String[] keys = {
+//            "sucmanh_dmg", "thanphap_dodge", "thanphap_crit",
+//            "noicong_mana", "noicong_magicdmg", "theluc_hp", "theluc_def"
+//        };
+//        String[] stats = {
+//            SharedStat.ATTACK_DAMAGE, SharedStat.DODGE_RATING, SharedStat.CRITICAL_STRIKE_CHANCE,
+//            SharedStat.MAX_MANA, SharedStat.MAGICAL_DAMAGE, SharedStat.MAX_HEALTH, SharedStat.ARMOR
+//        };
+//
+//        for (int i = 0; i < keys.length; i++) {
+//            try {
+//                mmoData.getStatMap().getInstance(stats[i])
+//                    .removeModifier(MODIFIER_KEY + keys[i]);
+//            } catch (Exception ignored) {}
+//        }
+//    }
 
     public static boolean addPoint(Player p, TiemNangType type) {
         PlayerData data = PlayerDataManager.get(p);
