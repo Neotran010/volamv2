@@ -46,7 +46,7 @@ public class Main extends JavaPlugin
 		// Register commands
 		getCommand("kynang").setExecutor(new KyNangCommand());
 		getCommand("tiemnang").setExecutor(new TiemNangCommand());
-		getCommand("player").setExecutor(new PlayerCommand());
+		getCommand("nhanvat").setExecutor(new PlayerCommand());
 		getCommand("volam").setExecutor(new VolamCommand());
 		
 		getLogger().info("VoLamV2 đã được kích hoạt thành công!");

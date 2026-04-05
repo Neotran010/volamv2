@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import neo.volam2.data.PlayerData;
 import neo.volam2.data.PlayerDataManager;
+import neo.volam2.gui.ChonMonPhaiGUI;
 import neo.volam2.gui.ChonTocGUI;
 import neo.volam2.gui.ThongTinNhanVatGUI;
 
@@ -23,9 +24,15 @@ public class PlayerCommand implements CommandExecutor {
         PlayerData data = PlayerDataManager.get(p);
         if (data == null) return true;
 
-        // If player hasn't chosen a race/class yet, open selection GUI
-        if (!data.hasTocHe() || !data.hasMonPhai()) {
+        // If player hasn't chosen a race yet, open race selection GUI
+        if (!data.hasTocHe()) {
             ChonTocGUI.open(p);
+            return true;
+        }
+
+        // If player has race but no class, open class selection GUI
+        if (!data.hasMonPhai()) {
+            ChonMonPhaiGUI.open(p);
             return true;
         }
 
