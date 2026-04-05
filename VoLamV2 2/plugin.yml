@@ -14,11 +14,12 @@ commands:
   tiemnang:
     description: Mo GUI tiem nang
     usage: /tiemnang
-  player:
+  nhanvat:
     description: Mo GUI thong tin nhan vat
-    usage: /player
-    aliases: [nv, nhanvat]
+    usage: /nhanvat
+    aliases: [nv, player]
   volam:
     description: Lenh admin VoLam
-    usage: /volam admin <subcommand>
+    usage: /volam <subcommand>
     permission: volam.admin
+    permission-message: §cBan khong co quyen su dung lenh nay!

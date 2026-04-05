@@ -18,6 +18,11 @@ public class VolamCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("volam.admin")) {
+            sender.sendMessage("§cBạn không có quyền sử dụng lệnh này!");
+            return true;
+        }
+
         if (args.length == 0) {
             sendHelp(sender);
             return true;
