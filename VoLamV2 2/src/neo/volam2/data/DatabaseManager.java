@@ -46,6 +46,7 @@ public class DatabaseManager {
                 "mon_phai TEXT, " +
                 "nhanh TEXT, " +
                 "level INTEGER DEFAULT 1, " +
+                "exp INTEGER DEFAULT 0, " +
                 "diem_tiem_nang_add INTEGER DEFAULT 0, " +
                 "suc_manh INTEGER DEFAULT 0, " +
                 "than_phap INTEGER DEFAULT 0, " +
@@ -63,6 +64,13 @@ public class DatabaseManager {
                 "PRIMARY KEY (uuid, skill_name)" +
                 ")"
             );
+        }
+
+        // Migration: add exp column if not exists (for existing databases)
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate("ALTER TABLE player_data ADD COLUMN exp INTEGER DEFAULT 0");
+        } catch (SQLException ignored) {
+            // Column already exists
         }
     }
 
@@ -87,6 +95,7 @@ public class DatabaseManager {
                     try { data.setNhanh(Nhanh.valueOf(nhanhStr)); } catch (Exception ignored) {}
                 }
                 data.setLevel(rs.getInt("level"));
+                data.setExp(rs.getInt("exp"));
                 data.setDiemTiemNangAdd(rs.getInt("diem_tiem_nang_add"));
                 data.setSucManh(rs.getInt("suc_manh"));
                 data.setThanPhap(rs.getInt("than_phap"));
@@ -120,23 +129,24 @@ public class DatabaseManager {
             // Upsert player_data
             try (PreparedStatement ps = connection.prepareStatement(
                     "INSERT OR REPLACE INTO player_data " +
-                    "(uuid, player_name, toc_he, mon_phai, nhanh, level, " +
+                    "(uuid, player_name, toc_he, mon_phai, nhanh, level, exp, " +
                     "diem_tiem_nang_add, suc_manh, than_phap, noi_cong, the_luc, " +
                     "diem_ky_nang_add, trigger_choose_class) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 ps.setString(1, data.getUuid().toString());
                 ps.setString(2, data.getPlayerName());
                 ps.setString(3, data.getTocHe() != null ? data.getTocHe().name() : null);
                 ps.setString(4, data.getMonPhai() != null ? data.getMonPhai().name() : null);
                 ps.setString(5, data.getNhanh() != null ? data.getNhanh().name() : null);
                 ps.setInt(6, data.getLevel());
-                ps.setInt(7, data.getDiemTiemNangAdd());
-                ps.setInt(8, data.getSucManh());
-                ps.setInt(9, data.getThanPhap());
-                ps.setInt(10, data.getNoiCong());
-                ps.setInt(11, data.getTheLuc());
-                ps.setInt(12, data.getDiemKyNangAdd());
-                ps.setInt(13, data.isTriggerChooseClass() ? 1 : 0);
+                ps.setInt(7, data.getExp());
+                ps.setInt(8, data.getDiemTiemNangAdd());
+                ps.setInt(9, data.getSucManh());
+                ps.setInt(10, data.getThanPhap());
+                ps.setInt(11, data.getNoiCong());
+                ps.setInt(12, data.getTheLuc());
+                ps.setInt(13, data.getDiemKyNangAdd());
+                ps.setInt(14, data.isTriggerChooseClass() ? 1 : 0);
                 ps.executeUpdate();
             }
 

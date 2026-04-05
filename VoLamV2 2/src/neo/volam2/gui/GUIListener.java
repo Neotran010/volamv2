@@ -129,19 +129,19 @@ public class GUIListener implements Listener {
         int slot = e.getSlot();
 
         switch (slot) {
-            case 29: // Ky Nang
+            case 38: // Ky Nang
                 KyNangGUI.open(p);
                 break;
-            case 31: // Tiem Nang
+            case 40: // Tiem Nang
                 TiemNangGUI.open(p);
                 break;
-            case 33: // Chuyen Nhanh
+            case 42: // Chuyen Nhanh
                 ChuyenNhanhGUI.open(p);
                 break;
-            case 35: // Chuyen Phai
+            case 44: // Chuyen Phai
                 ChuyenPhaiGUI.open(p);
                 break;
-            case 40: // Close
+            case 49: // Close
                 p.closeInventory();
                 break;
         }

@@ -1,5 +1,6 @@
 package neo.volam2.gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,15 +41,32 @@ public class NangCapKyNangGUI {
             inv.setItem(i, U.buildItem(Material.BLACK_STAINED_GLASS_PANE, " ", null, false, 1));
         }
 
-        // Skill info - center
-        inv.setItem(4, U.buildItem(Material.ENCHANTED_BOOK, skill.getDisplayName(),
-            Arrays.asList("",
-                "§7Cấp hiện tại: §f" + currentLevel + "§7/§f10",
-                "§7Cấp yêu cầu: §f" + skill.getRequiredLevel(),
-                "§7Loại: " + skill.getType(),
-                skill.getManaCost() > 0 ? "§7Mana: §b" + skill.getManaCost() : "",
-                skill.getCooldown() > 0 ? "§7Hồi chiêu: §f" + U.lamTronString(skill.getCooldown()) + "s" : ""
-            ), true, 1));
+        // Skill info - center (with full detail)
+        List<String> skillLore = new ArrayList<>();
+        skillLore.add("");
+        skillLore.add("§7Cấp hiện tại: §f" + currentLevel + "§7/§f10");
+        skillLore.add("§7Cấp yêu cầu: §f" + skill.getRequiredLevel());
+        skillLore.add("§7Loại: " + skill.getType());
+        if (skill.getManaCost() > 0) {
+            skillLore.add("§7Mana: §b" + skill.getManaCost());
+        }
+        if (skill.getCooldown() > 0) {
+            skillLore.add("§7Hồi chiêu: §f" + U.lamTronString(skill.getCooldown()) + "s");
+        }
+        if (skill.getComboKey() != null) {
+            skillLore.add("§7Combo: §e" + skill.getComboKey());
+        }
+        if (skill.getBranch() != null) {
+            skillLore.add("§7Nhánh: " + skill.getBranch().getDisplayName());
+        } else {
+            skillLore.add("§7Nhánh: §fChung (tất cả nhánh)");
+        }
+        skillLore.add("");
+        skillLore.add("§e§lMô tả:");
+        for (String desc : skill.getDescription()) {
+            skillLore.add("§7 " + desc);
+        }
+        inv.setItem(4, U.buildItem(Material.ENCHANTED_BOOK, skill.getDisplayName(), skillLore, true, 1));
 
         // Upgrade button
         boolean canUpgrade = currentLevel < 10 && data.getAvailableDiemKyNang() > 0
