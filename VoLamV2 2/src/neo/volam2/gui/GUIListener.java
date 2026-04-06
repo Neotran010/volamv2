@@ -41,7 +41,7 @@ public class GUIListener implements Listener {
         } else if (title.equals(KyNangGUI.TITLE)) {
             e.setCancelled(true);
             handleKyNang(p, e);
-        } else if (title.startsWith(NangCapKyNangGUI.TITLE_PREFIX) || title.equals("§0§l✦ §a§lNâng Cấp: §a§lKỹ Năng §0§l✦")) {
+        } else if (title.equals(NangCapKyNangGUI.TITLE)) {
             e.setCancelled(true);
             handleNangCapKyNang(p, e);
         } else if (title.equals(TiemNangGUI.TITLE)) {
@@ -209,35 +209,32 @@ public class GUIListener implements Listener {
             PlayerData data = PlayerDataManager.get(p);
             if (data == null) return;
 
-            // Find which skill from title
-            String title = e.getView().getTitle();
-            if (data.getMonPhai() == MonPhai.THIEU_LAM) {
-                for (SkillInfo skill : ThieuLamSkills.getAllSkillInfos()) {
-                    String expectedTitle = NangCapKyNangGUI.TITLE_PREFIX + skill.getDisplayName() + " §0§l✦";
-                    if (expectedTitle.length() > 32) {
-                        expectedTitle = NangCapKyNangGUI.TITLE_PREFIX + "§a§lKỹ Năng §0§l✦";
-                    }
-                    if (title.equals(expectedTitle)) {
-                        int currentLevel = data.getSkillLevel(skill.getId());
-                        if (currentLevel >= 10) {
-                            p.sendMessage("§c§l[KỸ NĂNG] §cĐã đạt cấp tối đa!");
-                            return;
-                        }
-                        if (data.getAvailableDiemKyNang() <= 0) {
-                            p.sendMessage("§c§l[KỸ NĂNG] §cKhông đủ điểm kỹ năng!");
-                            return;
-                        }
+            // Get skill ID from the stored viewing state
+            String skillId = NangCapKyNangGUI.getViewingSkillId(p.getUniqueId());
+            if (skillId == null) return;
 
-                        data.setSkillLevel(skill.getId(), currentLevel + 1);
-                        p.sendMessage("§a§l[KỸ NĂNG] §aNâng cấp " + skill.getDisplayName() +
-                            " §athành công! §7(Lv." + (currentLevel + 1) + ")");
-                        U.playSound(p, Sound.ENTITY_PLAYER_LEVELUP);
-                        PlayerDataManager.save(p);
-                        NangCapKyNangGUI.open(p, skill.getId());
-                        return;
-                    }
-                }
+            SkillInfo skill = null;
+            if (data.getMonPhai() == MonPhai.THIEU_LAM) {
+                skill = ThieuLamSkills.getById(skillId);
             }
+            if (skill == null) return;
+
+            int currentLevel = data.getSkillLevel(skill.getId());
+            if (currentLevel >= 10) {
+                p.sendMessage("§c§l[KỸ NĂNG] §cĐã đạt cấp tối đa!");
+                return;
+            }
+            if (data.getAvailableDiemKyNang() <= 0) {
+                p.sendMessage("§c§l[KỸ NĂNG] §cKhông đủ điểm kỹ năng!");
+                return;
+            }
+
+            data.setSkillLevel(skill.getId(), currentLevel + 1);
+            p.sendMessage("§a§l[KỸ NĂNG] §aNâng cấp " + skill.getDisplayName() +
+                " §athành công! §7(Lv." + (currentLevel + 1) + ")");
+            U.playSound(p, Sound.ENTITY_PLAYER_LEVELUP);
+            PlayerDataManager.save(p);
+            NangCapKyNangGUI.open(p, skill.getId());
         }
     }
 
