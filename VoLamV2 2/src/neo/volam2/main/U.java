@@ -253,11 +253,21 @@ public class U {
 	}
 	
 	public static ItemStack buildItem(Material m, String displayName, List<String> lore, boolean enchant, int amount) {
-		ItemStack i = new ItemStack(m);
+		ItemStack i = new ItemStack(m, amount);
 		ItemMeta im = i.getItemMeta();
 		im.setDisplayName(displayName);
 		im.setLore(lore);
-		im.addItemFlags(ItemFlag.values());
+		// Do NOT use ItemFlag.values() — in Bukkit 1.21+ it includes HIDE_TOOLTIP
+		// which hides the entire tooltip (name, lore, everything).
+		im.addItemFlags(
+			ItemFlag.HIDE_ENCHANTS,
+			ItemFlag.HIDE_ATTRIBUTES,
+			ItemFlag.HIDE_UNBREAKABLE,
+			ItemFlag.HIDE_DESTROYS,
+			ItemFlag.HIDE_PLACED_ON,
+			ItemFlag.HIDE_DYE,
+			ItemFlag.HIDE_ARMOR_TRIM
+		);
 		if(enchant) {
 			im.addEnchant(Enchantment.UNBREAKING, 1, false);
 		}

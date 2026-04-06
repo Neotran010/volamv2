@@ -16,6 +16,7 @@ public class PlayerData {
 
     // Level
     private int level = 1;
+    private int exp = 0;
 
     // Tiem nang (potential stats)
     private int diemTiemNang = 0; // available points
@@ -89,6 +90,19 @@ public class PlayerData {
     public void setLevel(int level) {
         this.level = level;
         dirty = true;
+    }
+
+    public int getExp() {
+        return exp;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+        dirty = true;
+    }
+
+    public int getMaxExp() {
+        return level * 100;
     }
 
     // Tiem nang total = level * 5 + add

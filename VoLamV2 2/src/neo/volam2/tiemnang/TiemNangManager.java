@@ -29,8 +29,8 @@ public class TiemNangManager {
         MMOPlayerData mmoData = MMOPlayerData.get(p.getUniqueId());
         if (mmoData == null) return;
 
-        // Remove old modifiers
-//        removeStats(p);
+        // Remove old modifiers before re-applying
+        removeStats(p);
 
         // Suc Manh: +physical damage
         if (data.getSucManh() > 0) {
@@ -70,26 +70,26 @@ public class TiemNangManager {
         }
     }
 
-//    public static void removeStats(Player p) {
-//        MMOPlayerData mmoData = MMOPlayerData.get(p.getUniqueId());
-//        if (mmoData == null) return;
-//
-//        String[] keys = {
-//            "sucmanh_dmg", "thanphap_dodge", "thanphap_crit",
-//            "noicong_mana", "noicong_magicdmg", "theluc_hp", "theluc_def"
-//        };
-//        String[] stats = {
-//            SharedStat.ATTACK_DAMAGE, SharedStat.DODGE_RATING, SharedStat.CRITICAL_STRIKE_CHANCE,
-//            SharedStat.MAX_MANA, SharedStat.MAGICAL_DAMAGE, SharedStat.MAX_HEALTH, SharedStat.ARMOR
-//        };
-//
-//        for (int i = 0; i < keys.length; i++) {
-//            try {
-//                mmoData.getStatMap().getInstance(stats[i])
-//                    .removeModifier(MODIFIER_KEY + keys[i]);
-//            } catch (Exception ignored) {}
-//        }
-//    }
+    public static void removeStats(Player p) {
+        MMOPlayerData mmoData = MMOPlayerData.get(p.getUniqueId());
+        if (mmoData == null) return;
+
+        String[] keys = {
+            "sucmanh_dmg", "thanphap_dodge", "thanphap_crit",
+            "noicong_mana", "noicong_magicdmg", "theluc_hp", "theluc_def"
+        };
+        String[] stats = {
+            SharedStat.ATTACK_DAMAGE, SharedStat.DODGE_RATING, SharedStat.CRITICAL_STRIKE_CHANCE,
+            SharedStat.MAX_MANA, SharedStat.MAGICAL_DAMAGE, SharedStat.MAX_HEALTH, SharedStat.ARMOR
+        };
+
+        for (int i = 0; i < keys.length; i++) {
+            try {
+                mmoData.getStatMap().getInstance(stats[i])
+                    .removeModifier(MODIFIER_KEY + keys[i]);
+            } catch (Exception ignored) {}
+        }
+    }
 
     public static boolean addPoint(Player p, TiemNangType type) {
         PlayerData data = PlayerDataManager.get(p);
@@ -117,5 +117,35 @@ public class TiemNangManager {
         applyStats(p);
         p.sendMessage("§a§l[TIỀM NĂNG] §aNâng §f" + type.getDisplayName() + " §athành công!");
         return true;
+    }
+
+    // === Public getters for computed stat bonuses ===
+
+    public static double getPhysicalDamage(PlayerData data) {
+        return data.getSucManh() * SUC_MANH_DAMAGE;
+    }
+
+    public static double getDodge(PlayerData data) {
+        return data.getThanPhap() * THAN_PHAP_DODGE;
+    }
+
+    public static double getCritChance(PlayerData data) {
+        return data.getThanPhap() * THAN_PHAP_CRIT_CHANCE;
+    }
+
+    public static double getMaxMana(PlayerData data) {
+        return data.getNoiCong() * NOI_CONG_MANA;
+    }
+
+    public static double getMagicDamage(PlayerData data) {
+        return data.getNoiCong() * NOI_CONG_MAGIC_DMG;
+    }
+
+    public static double getMaxHP(PlayerData data) {
+        return data.getTheLuc() * THE_LUC_HP;
+    }
+
+    public static double getDefense(PlayerData data) {
+        return data.getTheLuc() * THE_LUC_DEFENSE;
     }
 }
