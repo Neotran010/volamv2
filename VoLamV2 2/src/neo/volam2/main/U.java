@@ -431,4 +431,23 @@ public class U {
 		location.getWorld().playSound(location, blockTripwireClickOn, 16, 16);
 	}
 
+	/**
+	 * Formats a combo key string like "LRL" into colored display format.
+	 * L = §c⬅ TRÁI, R = §a➡ PHẢI, separated by §7 -
+	 */
+	public static String formatComboKey(String comboKey) {
+		if (comboKey == null || comboKey.isEmpty()) return "";
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < comboKey.length(); i++) {
+			if (i > 0) sb.append(" §7- ");
+			char c = comboKey.charAt(i);
+			if (c == 'L') {
+				sb.append("§c⬅ TRÁI");
+			} else if (c == 'R') {
+				sb.append("§a➡ PHẢI");
+			}
+		}
+		return sb.toString();
+	}
+
 }

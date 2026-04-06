@@ -2,7 +2,10 @@ package neo.volam2.gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -18,7 +21,10 @@ import neo.volam2.main.U;
 
 public class NangCapKyNangGUI {
 
-    public static final String TITLE_PREFIX = "§0§l✦ §a§lNâng Cấp: ";
+    public static final String TITLE = "§0§l✦ §a§lNâng Cấp Kỹ Năng §0§l✦";
+
+    /** Tracks which skill each player is currently viewing in the upgrade GUI */
+    private static final Map<UUID, String> viewingSkill = new HashMap<>();
 
     public static void open(Player p, String skillId) {
         PlayerData data = PlayerDataManager.get(p);
@@ -27,14 +33,12 @@ public class NangCapKyNangGUI {
         SkillInfo skill = findSkill(data, skillId);
         if (skill == null) return;
 
-        int currentLevel = data.getSkillLevel(skillId);
-        String title = TITLE_PREFIX + skill.getDisplayName() + " §0§l✦";
-        // Truncate title if too long
-        if (title.length() > 32) {
-            title = TITLE_PREFIX + "§a§lKỹ Năng §0§l✦";
-        }
+        // Store which skill the player is viewing
+        viewingSkill.put(p.getUniqueId(), skillId);
 
-        Inventory inv = Bukkit.createInventory(null, 27, title);
+        int currentLevel = data.getSkillLevel(skillId);
+
+        Inventory inv = Bukkit.createInventory(null, 27, TITLE);
 
         // Fill
         for (int i = 0; i < 27; i++) {
@@ -48,13 +52,13 @@ public class NangCapKyNangGUI {
         skillLore.add("§7Cấp yêu cầu: §f" + skill.getRequiredLevel());
         skillLore.add("§7Loại: " + skill.getType());
         if (skill.getManaCost() > 0) {
-            skillLore.add("§7Mana: §b" + skill.getManaCost());
+            skillLore.add("§7Nội lực: §b" + skill.getManaCost());
         }
         if (skill.getCooldown() > 0) {
             skillLore.add("§7Hồi chiêu: §f" + U.lamTronString(skill.getCooldown()) + "s");
         }
         if (skill.getComboKey() != null) {
-            skillLore.add("§7Combo: §e" + skill.getComboKey());
+            skillLore.add("§7Chiêu thức: " + U.formatComboKey(skill.getComboKey()));
         }
         if (skill.getBranch() != null) {
             skillLore.add("§7Nhánh: " + skill.getBranch().getDisplayName());
@@ -94,6 +98,20 @@ public class NangCapKyNangGUI {
             Arrays.asList("§7Quay lại danh sách kỹ năng"), false, 1));
 
         p.openInventory(inv);
+    }
+
+    /**
+     * Gets the skill ID the player is currently viewing in the upgrade GUI.
+     */
+    public static String getViewingSkillId(UUID uuid) {
+        return viewingSkill.get(uuid);
+    }
+
+    /**
+     * Removes the player's viewing state (call on inventory close or disconnect).
+     */
+    public static void removeViewing(UUID uuid) {
+        viewingSkill.remove(uuid);
     }
 
     private static SkillInfo findSkill(PlayerData data, String skillId) {

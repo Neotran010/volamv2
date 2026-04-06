@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import neo.volam2.abilities.ComboListener;
 import neo.volam2.abilities.NeoSkills;
 import neo.volam2.abilities.NeoSkillsListener;
 import neo.volam2.data.DatabaseManager;
@@ -42,6 +43,7 @@ public class Main extends JavaPlugin
 		pm.registerEvents(new GUIListener(), this);
 		pm.registerEvents(new NeoSkillsListener(), this);
 		pm.registerEvents(new PlayerDataListener(), this);
+		pm.registerEvents(new ComboListener(), this);
 		
 		// Register commands
 		getCommand("kynang").setExecutor(new KyNangCommand());

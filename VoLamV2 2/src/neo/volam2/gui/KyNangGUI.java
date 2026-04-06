@@ -60,12 +60,9 @@ public class KyNangGUI {
 
             int currentLevel = data.getSkillLevel(skill.getId());
             boolean unlocked = data.getLevel() >= skill.getRequiredLevel();
-            boolean isBranch = skill.getBranch() != null;
-            boolean branchMatch = !isBranch || (data.getNhanh() != null && data.getNhanh() == skill.getBranch());
 
             Material mat;
             if (!unlocked) mat = Material.GRAY_DYE;
-            else if (isBranch && !branchMatch) mat = Material.RED_DYE;
             else if (currentLevel > 0) mat = Material.LIME_DYE;
             else mat = Material.YELLOW_DYE;
 
@@ -74,20 +71,23 @@ public class KyNangGUI {
             lore.add("§7Loại: " + skill.getType());
             lore.add("§7Cấp kỹ năng: §f" + currentLevel + "§7/§f10");
             lore.add("§7Cấp yêu cầu: §f" + skill.getRequiredLevel());
-            if (skill.getManaCost() > 0) lore.add("§7Mana: §b" + skill.getManaCost());
+            if (skill.getManaCost() > 0) lore.add("§7Nội lực: §b" + skill.getManaCost());
             if (skill.getCooldown() > 0) lore.add("§7Hồi chiêu: §f" + U.lamTronString(skill.getCooldown()) + "s");
+            if (skill.getComboKey() != null) {
+                lore.add("§7Chiêu thức: " + U.formatComboKey(skill.getComboKey()));
+            }
+            if (skill.getBranch() != null) {
+                lore.add("§7Nhánh: " + skill.getBranch().getDisplayName());
+            } else {
+                lore.add("§7Nhánh: §fChung (tất cả nhánh)");
+            }
             lore.add("");
             for (String desc : skill.getDescription()) {
                 lore.add("§7" + desc);
             }
             lore.add("");
-            if (isBranch) {
-                lore.add("§7Nhánh: " + (skill.getBranch() != null ? skill.getBranch().getDisplayName() : "§7Chung"));
-            }
             if (!unlocked) {
                 lore.add("§c✘ Chưa đủ cấp độ!");
-            } else if (isBranch && !branchMatch) {
-                lore.add("§c✘ Không đúng nhánh vũ khí!");
             } else if (currentLevel < 10 && data.getAvailableDiemKyNang() > 0) {
                 lore.add("§a✔ Click để nâng cấp!");
             } else if (currentLevel >= 10) {
@@ -106,10 +106,26 @@ public class KyNangGUI {
         p.openInventory(inv);
     }
 
+    /**
+     * Returns skills filtered by the player's current branch.
+     * Only shared skills (branch == null) and skills matching the player's branch are included.
+     */
     public static List<SkillInfo> getSkillsForPlayer(PlayerData data) {
+        List<SkillInfo> allSkills;
         if (data.getMonPhai() == MonPhai.THIEU_LAM) {
-            return ThieuLamSkills.getAllSkillInfos();
+            allSkills = ThieuLamSkills.getAllSkillInfos();
+        } else {
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
+
+        Nhanh playerBranch = data.getNhanh();
+        List<SkillInfo> filtered = new ArrayList<>();
+        for (SkillInfo skill : allSkills) {
+            // Include shared skills (branch == null) and skills matching the player's branch
+            if (skill.getBranch() == null || skill.getBranch() == playerBranch) {
+                filtered.add(skill);
+            }
+        }
+        return filtered;
     }
 }

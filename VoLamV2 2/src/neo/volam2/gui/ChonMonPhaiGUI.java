@@ -1,6 +1,8 @@
 package neo.volam2.gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -39,14 +41,26 @@ public class ChonMonPhaiGUI {
         int[] slots = {11, 13, 15};
         for (int i = 0; i < monPhais.length && i < slots.length; i++) {
             MonPhai mp = monPhais[i];
+            List<String> lore = new ArrayList<>();
+            lore.add("");
             if (mp.isMaintenance()) {
-                inv.setItem(slots[i], U.buildItem(mp.getIcon(), mp.getDisplayName(),
-                    Arrays.asList("", "§c§l⚠ Đang bảo trì!", "", "§7Môn phái này đang được phát triển.",
-                        "§7Vui lòng chọn môn phái khác."), false, 1));
+                lore.add("§c§l⚠ Đang bảo trì!");
+                lore.add("");
+                for (String desc : mp.getDescription()) {
+                    lore.add(desc);
+                }
+                lore.add("");
+                lore.add("§7Vui lòng chọn môn phái khác.");
+                inv.setItem(slots[i], U.buildItem(mp.getIcon(), mp.getDisplayName(), lore, false, 1));
             } else {
-                inv.setItem(slots[i], U.buildItem(mp.getIcon(), mp.getDisplayName(),
-                    Arrays.asList("", "§7Tộc: " + tocHe.getDisplayName(),
-                        "", "§eClick để gia nhập!"), true, 1));
+                lore.add("§7Tộc: " + tocHe.getDisplayName());
+                lore.add("");
+                for (String desc : mp.getDescription()) {
+                    lore.add(desc);
+                }
+                lore.add("");
+                lore.add("§eClick để gia nhập!");
+                inv.setItem(slots[i], U.buildItem(mp.getIcon(), mp.getDisplayName(), lore, true, 1));
             }
         }
 
