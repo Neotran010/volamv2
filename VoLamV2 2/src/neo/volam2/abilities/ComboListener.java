@@ -153,7 +153,7 @@ public class ComboListener implements Listener {
 
         // Check player level requirement
         if (pd.getLevel() < matchedSkill.getRequiredLevel()) {
-            p.sendMessage(Main.ABILITIES_PREFIX + "§cBạn chưa đủ cấp độ! Cần cấp §f" + matchedSkill.getRequiredLevel());
+            p.sendMessage(Main.ABILITIES_PREFIX + "§cBạn chưa đủ cấp độ! Cần cấp §f" + matchedSkill.getRequiredLevel() + "!");
             return;
         }
 

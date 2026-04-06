@@ -93,7 +93,7 @@ public class CooldownSkills implements NeoSkill {
 	}
 	
 	public void setCooldown(Player p, double seconds) {
-		cooldownPlayers.put(p.getName(), (long) (System.currentTimeMillis() + (long)(1000*seconds)));
+		cooldownPlayers.put(p.getName(), System.currentTimeMillis() + (long)(1000 * seconds));
 	}
 
 	@Override
