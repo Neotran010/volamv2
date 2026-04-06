@@ -56,6 +56,15 @@ public class HoanhTaoThietLinh extends CooldownSkills {
 		}.runTaskLater(Main.pl, 30);
 	}
 	
+	@Override
+	public void cast(Player p) {
+		int level = getSkillLevel(p);
+		if (level <= 0) return;
+		Location target = DamageU.getTargetAheadEndLocation(p, 10, 2);
+		cast(p, target, level);
+		sendDoSkillsMsg(p);
+	}
+	
 	private void particleHit(Location location, double range) {
 		Particles.circleBigger(location, Particle.INSTANT_EFFECT, 0.5, range, 0.5, Math.PI/16, 1, Sound.ENTITY_IRON_GOLEM_ATTACK);
 	}

@@ -1,6 +1,8 @@
 package neo.volam2.abilities;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,12 +17,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import neo.volam2.data.MonPhai;
+import neo.volam2.data.Nhanh;
+import neo.volam2.data.PlayerData;
+import neo.volam2.data.PlayerDataManager;
 import neo.volam2.main.Main;
 import neo.volam2.main.U;
 
 /**
  * Listens for sneak + left/right click events to track combo input.
  * Shows current combo progress as action bar title message.
+ * When sneak is released, matches combo against skills and casts if valid.
  */
 public class ComboListener implements Listener {
 
@@ -92,13 +99,105 @@ public class ComboListener implements Listener {
 
     @EventHandler
     public void onToggleSneak(PlayerToggleSneakEvent e) {
-        // When player stops sneaking, clear combo
+        // When player stops sneaking, try to match combo and cast skill
         if (!e.isSneaking()) {
             UUID uuid = e.getPlayer().getUniqueId();
             ComboData data = combos.remove(uuid);
-            if (data != null && data.timeoutTask != null) {
-                data.timeoutTask.cancel();
+            if (data != null) {
+                if (data.timeoutTask != null) {
+                    data.timeoutTask.cancel();
+                }
+                String combo = data.combo.toString();
+                if (!combo.isEmpty()) {
+                    tryMatchAndCastSkill(e.getPlayer(), combo);
+                }
             }
+        }
+    }
+
+    /**
+     * Attempts to match a combo string against available skills and cast the matched skill.
+     * Flow: match combo → check skill learned → check level → check cooldown → check cost → cast → set cooldown
+     */
+    private void tryMatchAndCastSkill(Player p, String combo) {
+        PlayerData pd = PlayerDataManager.get(p);
+        if (pd == null) return;
+
+        MonPhai monPhai = pd.getMonPhai();
+        if (monPhai == null) return;
+
+        Nhanh nhanh = pd.getNhanh();
+
+        // Get skill definitions for the player's class
+        List<SkillInfo> skillInfos = getSkillInfosForMonPhai(monPhai);
+
+        // Find the matching skill
+        SkillInfo matchedSkill = null;
+        for (SkillInfo si : skillInfos) {
+            if (si.getComboKey() == null) continue;
+            if (!si.getComboKey().equals(combo)) continue;
+            // Branch check: null = shared (all branches), otherwise must match player's branch
+            if (si.getBranch() != null && !si.getBranch().equals(nhanh)) continue;
+            matchedSkill = si;
+            break;
+        }
+
+        if (matchedSkill == null) return;
+
+        // Check if player has learned the skill (skill level > 0)
+        int skillLevel = pd.getSkillLevel(matchedSkill.getId());
+        if (skillLevel <= 0) {
+            p.sendMessage(Main.ABILITIES_PREFIX + "§cBạn chưa học kỹ năng §f" + matchedSkill.getDisplayName() + "§c!");
+            return;
+        }
+
+        // Check player level requirement
+        if (pd.getLevel() < matchedSkill.getRequiredLevel()) {
+            p.sendMessage(Main.ABILITIES_PREFIX + "§cBạn chưa đủ cấp độ! Cần cấp §f" + matchedSkill.getRequiredLevel());
+            return;
+        }
+
+        // Get the NeoSkill runtime instance
+        NeoSkill neoSkill = NeoSkills.get(matchedSkill.getId());
+        if (neoSkill == null) {
+            p.sendMessage(Main.ABILITIES_PREFIX + "§cKỹ năng chưa được triển khai!");
+            return;
+        }
+
+        // Check cooldown
+        if (neoSkill.isCooldown(p)) {
+            if (neoSkill instanceof CooldownSkills) {
+                ((CooldownSkills) neoSkill).sendCDMessage(p);
+            }
+            return;
+        }
+
+        // Check cost (HP/MP)
+        if (neoSkill instanceof CooldownSkills) {
+            if (!((CooldownSkills) neoSkill).cost(p, 0, (int) matchedSkill.getManaCost())) {
+                return;
+            }
+        }
+
+        // Cast the skill
+        neoSkill.cast(p);
+
+        // Set cooldown using SkillInfo's cooldown value
+        if (neoSkill instanceof CooldownSkills && matchedSkill.getCooldown() > 0) {
+            ((CooldownSkills) neoSkill).setCooldown(p, matchedSkill.getCooldown());
+        }
+    }
+
+    /**
+     * Gets the skill definitions for a given MonPhai (class).
+     */
+    private static List<SkillInfo> getSkillInfosForMonPhai(MonPhai monPhai) {
+        switch (monPhai) {
+            case THIEU_LAM:
+                return ThieuLamSkills.getAllSkillInfos();
+            // Add other classes here as they are implemented
+            default:
+                return Collections.emptyList();
         }
     }
 

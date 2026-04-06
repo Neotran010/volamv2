@@ -42,6 +42,14 @@ public class ThieuLamTramLienHoan extends CooldownSkills {
 		}.runTaskTimer(Main.pl, 0, 1);
 	}
 	
+	@Override
+	public void cast(Player p) {
+		int level = getSkillLevel(p);
+		if (level <= 0) return;
+		cast(p, level);
+		sendDoSkillsMsg(p);
+	}
+	
 	public static int getAmount(int level) {
 		if(level <= 0) return 0;
 		
