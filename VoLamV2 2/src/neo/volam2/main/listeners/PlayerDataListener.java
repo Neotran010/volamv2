@@ -12,6 +12,7 @@ import neo.volam2.data.PlayerData;
 import neo.volam2.data.PlayerDataManager;
 import neo.volam2.gui.ChonMonPhaiGUI;
 import neo.volam2.gui.ChonTocGUI;
+import neo.volam2.gui.NangCapKyNangGUI;
 import neo.volam2.main.Main;
 import neo.volam2.tiemnang.TiemNangManager;
 
@@ -35,6 +36,7 @@ public class PlayerDataListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
+        NangCapKyNangGUI.removeViewing(p.getUniqueId());
         PlayerDataManager.remove(p.getUniqueId());
     }
 
