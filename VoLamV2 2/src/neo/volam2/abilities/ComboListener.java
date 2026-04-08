@@ -73,7 +73,7 @@ public class ComboListener implements Listener {
 
         // Show combo progress as action bar
         String comboDisplay = formatComboDisplay(data.combo.toString());
-        p.sendTitle("§e§l⚡Chiêu thức⚡", comboDisplay, 0, 40, 0);
+        p.sendTitle("§e§l⚡Chiêu thức⚡", comboDisplay, 0, 40, 0); //
 
         // Schedule timeout to clear combo
         data.timeoutTask = new BukkitRunnable() {
