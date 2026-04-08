@@ -2,6 +2,7 @@ package neo.volam2.abilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -10,6 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import neo.volam2.abilities.NeoSkills.DurationSkills.DurationOnAttack;
+import neo.volam2.abilities.kim.thieulam.ChanDiaHong;
+import neo.volam2.abilities.kim.thieulam.DichCanCuongThe;
+import neo.volam2.abilities.kim.thieulam.HoanhTaoThietLinh;
+import neo.volam2.abilities.kim.thieulam.KimCangLienHoanChuong;
+import neo.volam2.abilities.kim.thieulam.LaHanHoThe;
+import neo.volam2.abilities.kim.thieulam.MaHaChienY;
+import neo.volam2.abilities.kim.thieulam.PhanChanKimCang;
+import neo.volam2.abilities.kim.thieulam.ThieuLamTramLienHoan;
 import neo.volam2.main.Main;
 
 public class NeoSkills {
@@ -19,8 +28,17 @@ public class NeoSkills {
 	private static List<DurationSkills> durationSkills = new ArrayList<NeoSkills.DurationSkills>();
 	
 	public static void setup() {
-	    // boost
 	    registeredNeoSkills = new ArrayList<NeoSkill>();
+	    
+	    // Thiếu Lâm skills
+	    registeredNeoSkills.add(new LaHanHoThe());
+	    registeredNeoSkills.add(new DichCanCuongThe());
+	    registeredNeoSkills.add(new PhanChanKimCang());
+	    registeredNeoSkills.add(new ChanDiaHong());
+	    registeredNeoSkills.add(new MaHaChienY());
+	    registeredNeoSkills.add(new KimCangLienHoanChuong());
+	    registeredNeoSkills.add(new HoanhTaoThietLinh());
+	    registeredNeoSkills.add(new ThieuLamTramLienHoan());
 	}
 
 	
@@ -29,6 +47,10 @@ public class NeoSkills {
 	            .filter(neoSkill -> neoSkill.getName().equals(name))
 	            .findFirst()
 	            .orElse(null);
+	}
+	
+	public static List<NeoSkill> getRegisteredSkills() {
+	    return Collections.unmodifiableList(registeredNeoSkills);
 	}
 	
 	public static void castDurationSkills(Player caster, LivingEntity target, int duration, double damage, int tickPerDamage, int tickParticle, 

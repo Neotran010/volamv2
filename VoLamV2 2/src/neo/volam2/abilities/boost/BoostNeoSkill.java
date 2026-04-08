@@ -133,6 +133,7 @@ public class BoostNeoSkill extends CooldownSkills {
             addBoostData(p, data);
         }
         onCast(p);
+        particleOnCast(p);
         super.cast(p);
     }
 

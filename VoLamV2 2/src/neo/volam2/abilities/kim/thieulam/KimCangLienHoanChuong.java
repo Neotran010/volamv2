@@ -86,6 +86,19 @@ public class KimCangLienHoanChuong extends CooldownSkills {
 		list.add(new KimCangAttackData(target.getLocation(), p, damage, level >= 7 ? 5 : level >= 5 ? 4 : 3));
 	}
 	
+	@Override
+	public void cast(Player p) {
+		int level = getSkillLevel(p);
+		if (level <= 0) return;
+		LivingEntity target = DamageU.getTargetAhead(p, 10, 2);
+		if (target == null) {
+			p.sendMessage(Main.ABILITIES_PREFIX + "§cKhông thấy mục tiêu!");
+			return;
+		}
+		cast(p, target, level);
+		sendDoSkillsMsg(p);
+	}
+	
 	public static double getDamage(int level) {
 		if(level <= 0) return 0;
 		
