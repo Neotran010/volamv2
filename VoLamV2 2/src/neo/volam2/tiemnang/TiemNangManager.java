@@ -70,7 +70,8 @@ public class TiemNangManager {
         }
     }
 
-    public static void removeStats(Player p) {
+    @SuppressWarnings("deprecation")
+	public static void removeStats(Player p) {
         MMOPlayerData mmoData = MMOPlayerData.get(p.getUniqueId());
         if (mmoData == null) return;
 
@@ -86,7 +87,7 @@ public class TiemNangManager {
         for (int i = 0; i < keys.length; i++) {
             try {
                 mmoData.getStatMap().getInstance(stats[i])
-                    .removeModifier(MODIFIER_KEY + keys[i]);
+                    .remove(MODIFIER_KEY + keys[i]);
             } catch (Exception ignored) {}
         }
     }
