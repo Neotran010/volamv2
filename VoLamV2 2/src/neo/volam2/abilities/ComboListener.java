@@ -95,7 +95,7 @@ public class ComboListener implements Listener {
             UUID uuid = e.getPlayer().getUniqueId();
             ComboData data = combos.remove(uuid);
             if (data != null && data.timeoutTask != null) {
-            	e.getPlayer().sendTitle("", "", 0, 0, 0); // Clear action bar
+            	e.getPlayer().sendTitle("", "", 0, 0, 0); // Clear action bar //
                 data.timeoutTask.cancel();
             }
         }
