@@ -1,5 +1,6 @@
 package neo.volam2.abilities;
 
+import java.awt.TextComponent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -13,8 +14,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import neo.volam2.main.Main;
 import neo.volam2.main.U;
 
@@ -68,8 +67,7 @@ public class ComboListener implements Listener {
 
         // Show combo progress as action bar
         String comboDisplay = formatComboDisplay(data.combo.toString());
-        p.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-            TextComponent.fromLegacy("§e§l⚡ Chiêu thức: " + comboDisplay));
+        p.sendTitle("§e§l⚡Chiêu thức⚡", comboDisplay, 0, 40, 0);
 
         // Schedule timeout to clear combo
         data.timeoutTask = new BukkitRunnable() {
@@ -97,6 +95,7 @@ public class ComboListener implements Listener {
             UUID uuid = e.getPlayer().getUniqueId();
             ComboData data = combos.remove(uuid);
             if (data != null && data.timeoutTask != null) {
+            	e.getPlayer().sendTitle("", "", 0, 0, 0); // Clear action bar
                 data.timeoutTask.cancel();
             }
         }
