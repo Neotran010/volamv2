@@ -1,0 +1,23 @@
+# Compiled class files
+*.class
+
+# Eclipse build output
+**/bin/
+
+# Eclipse settings (IDE-specific preferences)
+.settings/
+
+# Eclipse workspace metadata
+.metadata/
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
