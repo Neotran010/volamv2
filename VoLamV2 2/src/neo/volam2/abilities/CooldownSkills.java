@@ -58,6 +58,7 @@ public class CooldownSkills implements NeoSkill {
 		long now = System.currentTimeMillis();
 		if (time <= now) return 0;
 		return (time - now) / 1000.0; // Trả về số giây còn lại
+		//TODO fix lỗi time = 0 -> không cooldown
 	}
 
 	@Override
@@ -84,7 +85,16 @@ public class CooldownSkills implements NeoSkill {
 
 	@Override
 	public boolean isCooldown(Player p) {
-		return cooldownPlayers.containsKey(p.getName());
+		if(cooldownPlayers.containsKey(p.getName())) {
+			Long time = cooldownPlayers.get(p.getName());
+			if(time == null) return false;
+			long now = System.currentTimeMillis();
+			if (time <= now) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override

@@ -10,6 +10,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import neo.volam2.abilities.NeoSkills.DurationSkills.DurationOnAttack;
+import neo.volam2.abilities.kim.KimCangHoThanQuyet;
+import neo.volam2.abilities.kim.KimPhongLienKich;
+import neo.volam2.abilities.kim.ThietGiapHoThe;
+import neo.volam2.abilities.kim.thieulam.ChanDiaHong;
+import neo.volam2.abilities.kim.thieulam.DichCanCuongThe;
+import neo.volam2.abilities.kim.thieulam.HoanhTaoThietLinh;
+import neo.volam2.abilities.kim.thieulam.KimCangLienHoanChuong;
+import neo.volam2.abilities.kim.thieulam.LaHanHoThe;
+import neo.volam2.abilities.kim.thieulam.MaHaChienY;
+import neo.volam2.abilities.kim.thieulam.PhanChanKimCang;
+import neo.volam2.abilities.kim.thieulam.ThieuLamTramLienHoan;
 import neo.volam2.main.Main;
 
 public class NeoSkills {
@@ -21,6 +32,30 @@ public class NeoSkills {
 	public static void setup() {
 	    // boost
 	    registeredNeoSkills = new ArrayList<NeoSkill>();
+	    registeredNeoSkills.add(new KimCangHoThanQuyet());
+	    registeredNeoSkills.add(new KimPhongLienKich());
+	    registeredNeoSkills.add(new ThietGiapHoThe());
+	    registeredNeoSkills.add(new ChanDiaHong());
+	    registeredNeoSkills.add(new DichCanCuongThe());
+	    registeredNeoSkills.add(new HoanhTaoThietLinh());
+	    registeredNeoSkills.add(new KimCangLienHoanChuong());
+	    registeredNeoSkills.add(new LaHanHoThe());
+	    registeredNeoSkills.add(new MaHaChienY());
+	    registeredNeoSkills.add(new PhanChanKimCang());
+	    registeredNeoSkills.add(new ThieuLamTramLienHoan());
+	    
+	    
+	    new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				for(NeoSkill ns : registeredNeoSkills) {
+					if(ns instanceof CooldownSkills) {
+						((CooldownSkills) ns).onTick();
+					}
+				}
+			}
+		}.runTaskTimer(Main.pl, 0, 1);
 	}
 
 	

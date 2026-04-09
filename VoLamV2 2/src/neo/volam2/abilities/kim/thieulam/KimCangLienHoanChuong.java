@@ -72,13 +72,31 @@ public class KimCangLienHoanChuong extends CooldownSkills {
 		}
 		
 		private void particle() {
-			Location l = location.clone().add(U.random(-3, 3),10,U.random(-3, 3));
-			Vector v = location.clone().subtract(l).toVector().normalize();
-			ParticleNativeCore.loadAPI(Main.pl).LIST_1_13.BLOCK.of(Material.GOLD_BLOCK).packetMotion(false, l, v);
+			Location l = location.clone().add(U.random(-3, 3),5,U.random(-3, 3));
+			Vector v = location.clone().subtract(l).toVector();
+//			ParticleNativeCore.loadAPI(Main.pl).LIST_1_13.BLOCK_MARKER.of(Material.DIAMOND_BLOCK).packet(true, v).sendInRadiusTo(l.getWorld().getPlayers(), 32);
+			//TODO chỉnh lại particle cho đẹp hơn
+			ParticleNativeCore.loadAPI(Main.pl).LIST_1_13.BLOCK.of(Material.DIAMOND_BLOCK).packetMotion(false, l, v).sendInRadiusTo(l.getWorld().getPlayers(), 32);
 			Particles.DoParticle(location, Particle.EXPLOSION, 3, 1, 0.2, 1, 1);
 			U.playSound(location, Sound.ENTITY_GENERIC_EXPLODE);
 		}
 		
+	}
+	
+	@Override
+	public void cast(Player p) {
+		if(isCooldown(p)) {
+			sendCDMessage(p);
+			return;
+		}
+		LivingEntity target = DamageU.getTargetAhead(p, 16, 1);
+		if(target == null) {
+			p.sendMessage("§cKhông tìm thấy mục tiêu!");
+			return;
+		}
+
+		setCooldown(p);
+		cast(p, target, getSkillLevel(p));
 	}
 	
 	public void cast(Player p, LivingEntity target, int level) {

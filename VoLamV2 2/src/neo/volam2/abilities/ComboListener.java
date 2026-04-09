@@ -179,11 +179,6 @@ public class ComboListener implements Listener {
 
         // Cast the skill
         neoSkill.cast(p);
-
-        // Set cooldown using SkillInfo's cooldown value
-        if (neoSkill instanceof CooldownSkills && matchedSkill.getCooldown() > 0) {
-            ((CooldownSkills) neoSkill).setCooldown(p, matchedSkill.getCooldown());
-        }
     }
 
     /**
