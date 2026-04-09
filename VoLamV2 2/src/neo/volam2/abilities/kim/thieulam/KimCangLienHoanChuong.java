@@ -105,7 +105,7 @@ public class KimCangLienHoanChuong extends CooldownSkills {
 		
 		/** Phase 2: Particles gathering above the target (fist forming) */
 		private void gatherParticle() {
-			Location above = location.clone().add(0, 6 + hitCount * 0.5, 0);
+			Location above = location.clone().add(0, 6 + Math.min(hitCount * 0.5, 3.0), 0);
 			// Converging particles toward the gathering point
 			for(int i = 0; i < 6; i++) {
 				Location start = above.clone().add(U.random(-4, 4), U.random(-2, 3), U.random(-4, 4));
@@ -128,13 +128,13 @@ public class KimCangLienHoanChuong extends CooldownSkills {
 			
 			// === Falling block columns (fist slamming down) ===
 			// Central pillar (main fist)
-			spawnFallingColumn(center.clone(), 8 + hitCount, 0);
+			spawnFallingColumn(center.clone(), 8 + Math.min(hitCount, 4), 0);
 			// Surrounding pillars (staggered, like fingers)
 			for(int i = 0; i < 5; i++) {
 				double angle = (Math.PI * 2 / 5) * i + hitCount * 0.3;
 				double dist = 1.2 + U.random(0, 0.8);
 				Location pillarLoc = center.clone().add(Math.cos(angle) * dist, 0, Math.sin(angle) * dist);
-				spawnFallingColumn(pillarLoc, 6 + hitCount, (i + 1) * 1);
+				spawnFallingColumn(pillarLoc, 6 + Math.min(hitCount, 4), (i + 1) * 1);
 			}
 			
 			// === Impact shockwave ring expanding outward ===
@@ -196,7 +196,7 @@ public class KimCangLienHoanChuong extends CooldownSkills {
 						return;
 					}
 					Location blockLoc = base.clone().add(0, currentY, 0);
-					Material mat = SLAM_BLOCKS[(int)(U.random(0, SLAM_BLOCKS.length - 0.01))];
+					Material mat = SLAM_BLOCKS[(int)(U.random(0, SLAM_BLOCKS.length)) % SLAM_BLOCKS.length];
 					
 					// Falling block particle
 					Vector downward = new Vector(U.random(-0.05, 0.05), -0.8, U.random(-0.05, 0.05));
